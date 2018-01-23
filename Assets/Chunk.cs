@@ -20,12 +20,19 @@ public class Chunk {
 					int worldX = (int)(x + chunk.transform.position.x);
 					int worldY = (int)(y + chunk.transform.position.y);
 					int worldZ = (int)(z + chunk.transform.position.z);
-                    if (worldY <= Utils.GenerateHeight(worldX, worldZ))
-                        chunkData[x, y, z] = new Block(Block.BlockType.DIRT, pos,
-                                        chunk.gameObject, this);
-                    else
-                        chunkData[x, y, z] = new Block(Block.BlockType.AIR, pos,
-                                        chunk.gameObject, this);
+					
+					if(worldY <= Utils.GenerateStoneHeight(worldX,worldZ))
+						chunkData[x,y,z] = new Block(Block.BlockType.STONE, pos, 
+						                chunk.gameObject, this);
+					else if(worldY == Utils.GenerateHeight(worldX,worldZ))
+						chunkData[x,y,z] = new Block(Block.BlockType.GRASS, pos, 
+						                chunk.gameObject, this);
+					else if(worldY < Utils.GenerateHeight(worldX,worldZ))
+						chunkData[x,y,z] = new Block(Block.BlockType.DIRT, pos, 
+						                chunk.gameObject, this);
+					else
+						chunkData[x,y,z] = new Block(Block.BlockType.AIR, pos, 
+						                chunk.gameObject, this);
 				}
 	}
 

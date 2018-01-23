@@ -46,7 +46,8 @@ public class World : MonoBehaviour {
 					Vector3 chunkPosition = new Vector3(x*chunkSize, y*chunkSize, z*chunkSize);
 					Chunk c = new Chunk(chunkPosition, textureAtlas);
 					c.chunk.transform.parent = this.transform;
-					chunks.Add(c.chunk.name, c);				
+					chunks.Add(c.chunk.name, c);
+					
 				}
 
 		foreach(KeyValuePair<string, Chunk> c in chunks)

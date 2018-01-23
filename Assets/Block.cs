@@ -7,7 +7,7 @@ public class Block {
 	enum Cubeside {BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK};
 	public enum BlockType {GRASS, DIRT, STONE, AIR};
 
-	BlockType bType;
+	public BlockType bType;
 	public bool isSolid;
 	Chunk owner;
 	GameObject parent;
