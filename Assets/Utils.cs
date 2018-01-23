@@ -21,6 +21,19 @@ public class Utils {
 		return (int) height;
 	}
 
+    public static float fBM3D(float x, float y, float z, float sm, int oct)
+    {
+        float XY = fBM(x*sm,y*sm,oct,0.5f);
+        float YZ = fBM(y*sm,z*sm,oct,0.5f);
+        float XZ = fBM(x*sm,z*sm,oct,0.5f);
+
+        float YX = fBM(y*sm,x*sm,oct,0.5f);
+        float ZY = fBM(z*sm,y*sm,oct,0.5f);
+        float ZX = fBM(z*sm,x*sm,oct,0.5f);
+
+        return (XY+YZ+XZ+YX+ZY+ZX)/6.0f;
+    }
+
 	static float Map(float newmin, float newmax, float origmin, float origmax, float value)
     {
         return Mathf.Lerp (newmin, newmax, Mathf.InverseLerp (origmin, origmax, value));
