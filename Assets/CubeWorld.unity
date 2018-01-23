@@ -194,11 +194,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 868872717}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96f29721bee8119498bb017013fb3319, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fee9f5baf601d6459cd5c9e37f1de6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeMaterial: {fileID: 2100000, guid: cccd251ddbe57ce4cb073b97fef0e44c, type: 2}
-  bType: 0
+  cubeMaterial: {fileID: 0}
 --- !u!1 &1415241871
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,7 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f9d5b5e47463da41a75e131b12b4543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
+  target: {fileID: 868872718}
   targetOffset: {x: 0, y: 0, z: 0}
   distance: 5
   maxDistance: 100
