@@ -45,9 +45,10 @@ public class Utils {
         float frequency = 1;
         float amplitude = 1;
         float maxValue = 0;
+        float offset = 32000f;
         for(int i = 0; i < oct ; i++) 
         {
-                total += Mathf.PerlinNoise(x * frequency, z * frequency) * amplitude;
+                total += Mathf.PerlinNoise((x+offset) * frequency, (z+offset) * frequency) * amplitude;
 
                 maxValue += amplitude;
 
