@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 868872718}
   - component: {fileID: 868872719}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: World
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,10 +150,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 868872717}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fee9f5baf601d6459cd5c9e37f1de6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 01f083645f85a904ca26bf7adfbac979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeMaterial: {fileID: 2100000, guid: cccd251ddbe57ce4cb073b97fef0e44c, type: 2}
+  textureAtlas: {fileID: 2100000, guid: cccd251ddbe57ce4cb073b97fef0e44c, type: 2}
 --- !u!1 &1415241871
 GameObject:
   m_ObjectHideFlags: 0
