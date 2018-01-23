@@ -5,8 +5,8 @@ using UnityEngine;
 public class World : MonoBehaviour {
 
 	public Material textureAtlas;
-	public static int columnHeight = 3;
-	public static int chunkSize = 8;
+	public static int columnHeight = 16;
+	public static int chunkSize = 16;
 	public static int worldSize = 2;
 	public static Dictionary<string, Chunk> chunks;
 
@@ -46,8 +46,7 @@ public class World : MonoBehaviour {
 					Vector3 chunkPosition = new Vector3(x*chunkSize, y*chunkSize, z*chunkSize);
 					Chunk c = new Chunk(chunkPosition, textureAtlas);
 					c.chunk.transform.parent = this.transform;
-					chunks.Add(c.chunk.name, c);
-					
+					chunks.Add(c.chunk.name, c);				
 				}
 
 		foreach(KeyValuePair<string, Chunk> c in chunks)
