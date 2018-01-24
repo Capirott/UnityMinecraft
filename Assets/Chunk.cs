@@ -24,7 +24,6 @@ class BlockData
 	}
 }
 
-
 public class Chunk {
 
 	public Material cubeMaterial;
@@ -32,6 +31,7 @@ public class Chunk {
 	public GameObject chunk;
 	public enum ChunkStatus {DRAW,DONE,KEEP};
 	public ChunkStatus status;
+	public ChunkMB mb;
 	BlockData bd;
 
 	string BuildChunkFileName(Vector3 v)
@@ -168,6 +168,8 @@ public class Chunk {
 		
 		chunk = new GameObject(World.BuildChunkName(position));
 		chunk.transform.position = position;
+		mb = chunk.AddComponent<ChunkMB>();
+		mb.SetOwner(this);
 		cubeMaterial = c;
 		BuildChunk();
 	}

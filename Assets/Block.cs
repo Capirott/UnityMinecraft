@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block {
+public class Block{
 
 	enum Cubeside {BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK};
 	public enum BlockType {GRASS, DIRT, STONE, BEDROCK, REDSTONE, DIAMOND, NOCRACK, 
@@ -13,7 +13,7 @@ public class Block {
 	Chunk owner;
 	GameObject parent;
 	Vector3 position;
-	
+
 	public BlockType health;
 	int currentHealth;
 	int[] blockHealthMax = {3, 3, 4, -1, 4, 4, 0, 0, 0, 0, 0, 0};
@@ -73,11 +73,24 @@ public class Block {
 		currentHealth = blockHealthMax[(int)bType];
 	}
 
+	public void Reset()
+	{
+		health = BlockType.NOCRACK;
+		currentHealth = blockHealthMax[(int)bType];
+		owner.Redraw();
+	}
+
 	public bool HitBlock()
 	{
 		if(currentHealth == -1) return false;
 		currentHealth--;
 		health++;
+
+		if(currentHealth == (blockHealthMax[(int)bType]-1))
+		{
+			owner.mb.StartCoroutine(owner.mb.HealBlock(position));
+		}
+
 		if(currentHealth <= 0)
 		{
 			bType = BlockType.AIR;
