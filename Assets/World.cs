@@ -12,9 +12,10 @@ public class World : MonoBehaviour {
 	public static int columnHeight = 16;
 	public static int chunkSize = 16;
 	public static int worldSize = 1;
-	public static int radius = 7;
+	public static int radius = 4;
 	public static ConcurrentDictionary<string, Chunk> chunks;
 	public static bool firstbuild = true;
+	public static List<string> toRemove = new List<string>();
 
 	CoroutineQueue queue;
 	public static uint maxCoroutines = 1000;
@@ -90,8 +91,26 @@ public class World : MonoBehaviour {
 			{
 				c.Value.DrawChunk();
 			}
+			if(c.Value.chunk && Vector3.Distance(player.transform.position,
+								c.Value.chunk.transform.position) > radius*chunkSize)
+				toRemove.Add(c.Key);
 
 			yield return null;
+		}
+	}
+
+	IEnumerator RemoveOldChunks()
+	{
+		for(int i = 0; i < toRemove.Count; i++)
+		{
+			string n = toRemove[i];
+			Chunk c;
+			if(chunks.TryGetValue(n, out c))
+			{
+				Destroy(c.chunk);
+				chunks.TryRemove(n, out c);
+				yield return null;
+			}
 		}
 	}
 
@@ -119,7 +138,7 @@ public class World : MonoBehaviour {
 		this.transform.position = Vector3.zero;
 		this.transform.rotation = Quaternion.identity;	
 		queue = new CoroutineQueue(maxCoroutines, StartCoroutine);
-
+		
 		//build starting chunk
 		BuildChunkAt((int)(player.transform.position.x/chunkSize),
 											(int)(player.transform.position.y/chunkSize),
@@ -151,5 +170,6 @@ public class World : MonoBehaviour {
 		}
 
 		queue.Run(DrawChunks());
+		queue.Run(RemoveOldChunks());
 	}
 }
