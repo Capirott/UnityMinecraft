@@ -31,39 +31,40 @@ public class BlockInteraction : MonoBehaviour {
    				int y = (int) (Mathf.Round(hitBlock.y) - hit.collider.gameObject.transform.position.y);
    				int z = (int) (Mathf.Round(hitBlock.z) - hit.collider.gameObject.transform.position.z);
 
-   				List<string> updates = new List<string>();
-   				float thisChunkx = hit.collider.gameObject.transform.position.x;
-   				float thisChunky = hit.collider.gameObject.transform.position.y;
-   				float thisChunkz = hit.collider.gameObject.transform.position.z;
+				Chunk hitc;
+				if(World.chunks.TryGetValue(hit.collider.gameObject.name, out hitc) && hitc.chunkData[x,y,z].HitBlock())
+   				{
 
-   				updates.Add(hit.collider.gameObject.name);
+	   				List<string> updates = new List<string>();
+	   				float thisChunkx = hitc.chunk.transform.position.x;
+	   				float thisChunky = hitc.chunk.transform.position.y;
+	   				float thisChunkz = hitc.chunk.transform.position.z;
 
-   				//update neighbours?
-   				if(x == 0) 
-   					updates.Add(World.BuildChunkName(new Vector3(thisChunkx-World.chunkSize,thisChunky,thisChunkz)));
-				if(x == World.chunkSize - 1) 
-					updates.Add(World.BuildChunkName(new Vector3(thisChunkx+World.chunkSize,thisChunky,thisChunkz)));
-				if(y == 0) 
-					updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky-World.chunkSize,thisChunkz)));
-				if(y == World.chunkSize - 1) 
-					updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky+World.chunkSize,thisChunkz)));
-				if(z == 0) 
-					updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky,thisChunkz-World.chunkSize)));
-				if(z == World.chunkSize - 1) 
-					updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky,thisChunkz+World.chunkSize)));
+	   				//updates.Add(hit.collider.gameObject.name);
 
-	   			foreach(string cname in updates)
-	   			{
-	   				Chunk c;
-					if(World.chunks.TryGetValue(cname, out c))
-					{
-						DestroyImmediate(c.chunk.GetComponent<MeshFilter>());
-						DestroyImmediate(c.chunk.GetComponent<MeshRenderer>());
-						DestroyImmediate(c.chunk.GetComponent<Collider>());
-						c.chunkData[x,y,z].SetType(Block.BlockType.AIR);
-				   		c.DrawChunk();
-			   		}
-			   	}
+	   				//update neighbours?
+	   				if(x == 0) 
+	   					updates.Add(World.BuildChunkName(new Vector3(thisChunkx-World.chunkSize,thisChunky,thisChunkz)));
+					if(x == World.chunkSize - 1) 
+						updates.Add(World.BuildChunkName(new Vector3(thisChunkx+World.chunkSize,thisChunky,thisChunkz)));
+					if(y == 0) 
+						updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky-World.chunkSize,thisChunkz)));
+					if(y == World.chunkSize - 1) 
+						updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky+World.chunkSize,thisChunkz)));
+					if(z == 0) 
+						updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky,thisChunkz-World.chunkSize)));
+					if(z == World.chunkSize - 1) 
+						updates.Add(World.BuildChunkName(new Vector3(thisChunkx,thisChunky,thisChunkz+World.chunkSize)));
+
+		   			foreach(string cname in updates)
+		   			{
+		   				Chunk c;
+						if(World.chunks.TryGetValue(cname, out c))
+						{
+							c.Redraw();
+				   		}
+				   	}
+				}
 		   	}
    		}
 	}

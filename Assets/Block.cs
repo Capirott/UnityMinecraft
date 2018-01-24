@@ -5,13 +5,18 @@ using UnityEngine;
 public class Block {
 
 	enum Cubeside {BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK};
-	public enum BlockType {GRASS, DIRT, STONE, BEDROCK, REDSTONE, DIAMOND, AIR};
+	public enum BlockType {GRASS, DIRT, STONE, BEDROCK, REDSTONE, DIAMOND, NOCRACK, 
+							CRACK1, CRACK2, CRACK3, CRACK4, AIR};
 
 	public BlockType bType;
 	public bool isSolid;
 	Chunk owner;
 	GameObject parent;
 	Vector3 position;
+	
+	public BlockType health;
+	int currentHealth;
+	int[] blockHealthMax = {3, 3, 4, -1, 4, 4, 0, 0, 0, 0, 0, 0};
 
 	Vector2[,] blockUVs = { 
 		/*GRASS TOP*/		{new Vector2( 0.125f, 0.375f ), new Vector2( 0.1875f, 0.375f),
@@ -27,8 +32,19 @@ public class Block {
 		/*REDSTONE*/		{new Vector2( 0.1875f, 0.75f ), new Vector2( 0.25f, 0.75f),
 								new Vector2( 0.1875f, 0.8125f ),new Vector2( 0.25f, 0.8125f )},
 		/*DIAMOND*/			{new Vector2( 0.125f, 0.75f ), new Vector2( 0.1875f, 0.75f),
-								new Vector2( 0.125f, 0.8125f ),new Vector2( 0.1875f, 0.8125f )}
+								new Vector2( 0.125f, 0.8125f ),new Vector2( 0.1875f, 0.8125f )},
+		/*NOCRACK*/			{new Vector2( 0.6875f, 0f ), new Vector2( 0.75f, 0f),
+								new Vector2( 0.6875f, 0.0625f ),new Vector2( 0.75f, 0.0625f )},
+		/*CRACK1*/			{ new Vector2(0f,0f),  new Vector2(0.0625f,0f),
+ 								new Vector2(0f,0.0625f), new Vector2(0.0625f,0.0625f)},
+ 		/*CRACK2*/			{ new Vector2(0.0625f,0f),  new Vector2(0.125f,0f),
+ 								new Vector2(0.0625f,0.0625f), new Vector2(0.125f,0.0625f)},
+ 		/*CRACK3*/			{ new Vector2(0.125f,0f),  new Vector2(0.1875f,0f),
+ 								new Vector2(0.125f,0.0625f), new Vector2(0.1875f,0.0625f)},
+ 		/*CRACK4*/			{ new Vector2(0.1875f,0f),  new Vector2(0.25f,0f),
+ 								new Vector2(0.1875f,0.0625f), new Vector2(0.25f,0.0625f)}
 						}; 
+
 
 	public Block(BlockType b, Vector3 pos, GameObject p, Chunk o)
 	{
@@ -40,17 +56,9 @@ public class Block {
 			isSolid = false;
 		else
 			isSolid = true;
-	}
 
-	public Block(BlockType b, Vector3 pos, GameObject p)
-	{
-		bType = b;
-		parent = p;
-		position = pos;
-		if(bType == BlockType.AIR)
-			isSolid = false;
-		else
-			isSolid = true;
+		health = BlockType.NOCRACK;
+		currentHealth = blockHealthMax[(int)bType];
 	}
 
 	public void SetType(BlockType b)
@@ -60,8 +68,27 @@ public class Block {
 			isSolid = false;
 		else
 			isSolid = true;
+
+		health = BlockType.NOCRACK;
+		currentHealth = blockHealthMax[(int)bType];
 	}
 
+	public bool HitBlock()
+	{
+		if(currentHealth == -1) return false;
+		currentHealth--;
+		health++;
+		if(currentHealth <= 0)
+		{
+			bType = BlockType.AIR;
+			isSolid = false;
+			health = BlockType.NOCRACK;
+			owner.Redraw();
+			return true;
+		}
+		owner.Redraw();
+		return false;
+	}
 
 	void CreateQuad(Cubeside side)
 	{
@@ -71,6 +98,7 @@ public class Block {
 		Vector3[] vertices = new Vector3[4];
 		Vector3[] normals = new Vector3[4];
 		Vector2[] uvs = new Vector2[4];
+		List<Vector2> suvs = new List<Vector2>();
 		int[] triangles = new int[6];
 
 		//all possible UVs
@@ -100,6 +128,14 @@ public class Block {
 			uv01 = blockUVs[(int)(bType+1),2];
 			uv11 = blockUVs[(int)(bType+1),3];
 		}
+
+		//set cracks
+		suvs.Add(blockUVs[(int)(health+1),3]);
+		suvs.Add(blockUVs[(int)(health+1),2]);
+		suvs.Add(blockUVs[(int)(health+1),0]);
+		suvs.Add(blockUVs[(int)(health+1),1]);
+
+		//{uv11, uv01, uv00, uv10};
 
 		//all possible vertices 
 		Vector3 p0 = new Vector3( -0.5f,  -0.5f,  0.5f );
@@ -160,6 +196,7 @@ public class Block {
 		mesh.vertices = vertices;
 		mesh.normals = normals;
 		mesh.uv = uvs;
+		mesh.SetUVs(1,suvs);
 		mesh.triangles = triangles;
 		 
 		mesh.RecalculateBounds();
