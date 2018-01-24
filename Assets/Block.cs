@@ -80,6 +80,13 @@ public class Block{
 		owner.Redraw();
 	}
 
+	public bool BuildBlock(BlockType b)
+	{
+		SetType(b);
+		owner.Redraw();
+		return true;
+	}
+
 	public bool HitBlock()
 	{
 		if(currentHealth == -1) return false;

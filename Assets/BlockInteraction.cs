@@ -10,10 +10,10 @@ public class BlockInteraction : MonoBehaviour {
 	void Start () {
 		
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             RaycastHit hit;
             
@@ -25,14 +25,31 @@ public class BlockInteraction : MonoBehaviour {
    			//for cross hairs
             if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 10))
             {
-   				Vector3 hitBlock = hit.point - hit.normal/2.0f; 
+   				Chunk hitc;
+   				if(!World.chunks.TryGetValue(hit.collider.gameObject.name, out hitc)) return;
+
+   				Vector3 hitBlock;
+   				if(Input.GetMouseButtonDown(0))
+   				{
+   					hitBlock = hit.point - hit.normal/2.0f;
+   					
+   				}
+   				else
+   				 	hitBlock = hit.point + hit.normal/2.0f;
 
    				int x = (int) (Mathf.Round(hitBlock.x) - hit.collider.gameObject.transform.position.x);
    				int y = (int) (Mathf.Round(hitBlock.y) - hit.collider.gameObject.transform.position.y);
    				int z = (int) (Mathf.Round(hitBlock.z) - hit.collider.gameObject.transform.position.z);
-
-				Chunk hitc;
-				if(World.chunks.TryGetValue(hit.collider.gameObject.name, out hitc) && hitc.chunkData[x,y,z].HitBlock())
+				
+				bool update = false;
+				if(Input.GetMouseButtonDown(0))
+					update = hitc.chunkData[x,y,z].HitBlock();
+				else
+				{
+					update = hitc.chunkData[x,y,z].BuildBlock(Block.BlockType.STONE);
+				}
+				
+				if(update)
    				{
 
 	   				List<string> updates = new List<string>();
