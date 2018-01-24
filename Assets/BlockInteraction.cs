@@ -37,17 +37,15 @@ public class BlockInteraction : MonoBehaviour {
    				else
    				 	hitBlock = hit.point + hit.normal/2.0f;
 
-   				int x = (int) (Mathf.Round(hitBlock.x) - hit.collider.gameObject.transform.position.x);
-   				int y = (int) (Mathf.Round(hitBlock.y) - hit.collider.gameObject.transform.position.y);
-   				int z = (int) (Mathf.Round(hitBlock.z) - hit.collider.gameObject.transform.position.z);
-				
+                Block b = World.GetWorldBlock(hitBlock);
+
 				bool update = false;
-				if(Input.GetMouseButtonDown(0))
-					update = hitc.chunkData[x,y,z].HitBlock();
-				else
-				{
-					update = hitc.chunkData[x,y,z].BuildBlock(Block.BlockType.STONE);
-				}
+                if (Input.GetMouseButtonDown(0))
+                    update = b.HitBlock();
+                else
+                {
+                    update = b.BuildBlock(Block.BlockType.STONE);
+                }
 				
 				if(update)
    				{
@@ -57,10 +55,13 @@ public class BlockInteraction : MonoBehaviour {
 	   				float thisChunky = hitc.chunk.transform.position.y;
 	   				float thisChunkz = hitc.chunk.transform.position.z;
 
-	   				//updates.Add(hit.collider.gameObject.name);
+                    //updates.Add(hit.collider.gameObject.name);
+                    int x = (int)b.position.x;
+                    int y = (int)b.position.y;
+                    int z = (int)b.position.z;
 
-	   				//update neighbours?
-	   				if(x == 0) 
+                    //update neighbours?
+                    if (x == 0) 
 	   					updates.Add(World.BuildChunkName(new Vector3(thisChunkx-World.chunkSize,thisChunky,thisChunkz)));
 					if(x == World.chunkSize - 1) 
 						updates.Add(World.BuildChunkName(new Vector3(thisChunkx+World.chunkSize,thisChunky,thisChunkz)));

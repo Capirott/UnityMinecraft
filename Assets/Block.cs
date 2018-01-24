@@ -12,7 +12,7 @@ public class Block{
 	public bool isSolid;
 	Chunk owner;
 	GameObject parent;
-	Vector3 position;
+	public Vector3 position;
 
 	public BlockType health;
 	int currentHealth;
