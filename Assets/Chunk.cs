@@ -33,6 +33,7 @@ public class Chunk {
 	public ChunkStatus status;
 	public ChunkMB mb;
 	BlockData bd;
+	public bool changed = false;
 
 	string BuildChunkFileName(Vector3 v)
 	{
