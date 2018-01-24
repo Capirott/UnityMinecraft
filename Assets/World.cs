@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class World : MonoBehaviour {
 
@@ -11,6 +12,9 @@ public class World : MonoBehaviour {
 	public static int worldSize = 2;
 	public static int radius = 1;
 	public static Dictionary<string, Chunk> chunks;
+	public Slider loadingAmount;
+	public Camera cam;
+	public Button playButton;
 
 	public static string BuildChunkName(Vector3 v)
 	{
@@ -44,6 +48,9 @@ public class World : MonoBehaviour {
 		int posx = (int)Mathf.Floor(player.transform.position.x/chunkSize);
 		int posz = (int)Mathf.Floor(player.transform.position.z/chunkSize);
 
+		float totalChunks = (Mathf.Pow(radius*2+1,2) * columnHeight) * 2;
+		int processCount = 0;
+
 		for(int z = -radius; z <= radius; z++)
 			for(int x = -radius; x <= radius; x++)
 				for(int y = 0; y < columnHeight; y++)
@@ -54,17 +61,30 @@ public class World : MonoBehaviour {
 					Chunk c = new Chunk(chunkPosition, textureAtlas);
 					c.chunk.transform.parent = this.transform;
 					chunks.Add(c.chunk.name, c);
+					processCount ++;
+					loadingAmount.value = processCount/totalChunks * 100;
 					yield return null;
+
 					
 				}
 
 		foreach(KeyValuePair<string, Chunk> c in chunks)
 		{
 			c.Value.DrawChunk();
+			processCount ++;
+			loadingAmount.value = processCount/totalChunks * 100;
 			yield return null;
 		}
 		player.SetActive(true);
-		
+		loadingAmount.gameObject.SetActive(false);
+		cam.gameObject.SetActive(false);
+		playButton.gameObject.SetActive(false);		
+
+	}
+
+	public void StartBuild()
+	{
+		StartCoroutine(BuildWorld());
 	}
 
 	// Use this for initialization
@@ -72,8 +92,7 @@ public class World : MonoBehaviour {
 		player.SetActive(false);
 		chunks = new Dictionary<string, Chunk>();
 		this.transform.position = Vector3.zero;
-		this.transform.rotation = Quaternion.identity;
-		StartCoroutine(BuildWorld());
+		this.transform.rotation = Quaternion.identity;	
 	}
 	
 	// Update is called once per frame
