@@ -12,9 +12,14 @@ public class World : MonoBehaviour {
 	public static int columnHeight = 16;
 	public static int chunkSize = 16;
 	public static int worldSize = 1;
-	public static int radius = 4;
+	public static int radius = 7;
 	public static ConcurrentDictionary<string, Chunk> chunks;
 	public static bool firstbuild = true;
+
+	CoroutineQueue queue;
+	public static uint maxCoroutines = 1000;
+
+	public Vector3 lastbuildPos;
 
 	public static string BuildChunkName(Vector3 v)
 	{
@@ -43,10 +48,37 @@ public class World : MonoBehaviour {
 
 	IEnumerator BuildRecursiveWorld(int x, int y, int z, int rad)
 	{
+		rad--;
 		if(rad <= 0) yield break;
-		BuildChunkAt(x,y,z-1);
-		StartCoroutine(BuildRecursiveWorld(x, y, z-1, rad-1));
+		
+		//build chunk front
+		BuildChunkAt(x,y,z+1);
+		queue.Run(BuildRecursiveWorld(x,y,z+1,rad));
+		yield return null;
 
+		//build chunk back
+		BuildChunkAt(x,y,z-1);
+		queue.Run(BuildRecursiveWorld(x,y,z-1,rad));
+		yield return null;
+		
+		//build chunk left
+		BuildChunkAt(x-1,y,z);
+		queue.Run(BuildRecursiveWorld(x-1,y,z,rad));
+		yield return null;
+
+		//build chunk right
+		BuildChunkAt(x+1,y,z);
+		queue.Run(BuildRecursiveWorld(x+1,y,z,rad));
+		yield return null;
+		
+		//build chunk up
+		BuildChunkAt(x,y+1,z);
+		queue.Run(BuildRecursiveWorld(x,y+1,z,rad));
+		yield return null;
+		
+		//build chunk down
+		BuildChunkAt(x,y-1,z);
+		queue.Run(BuildRecursiveWorld(x,y-1,z,rad));
 		yield return null;
 	}
 
@@ -63,6 +95,15 @@ public class World : MonoBehaviour {
 		}
 	}
 
+	public void BuildNearPlayer()
+	{
+		StopCoroutine("BuildRecursiveWorld");
+		queue.Run(BuildRecursiveWorld((int)(player.transform.position.x/chunkSize),
+											(int)(player.transform.position.y/chunkSize),
+											(int)(player.transform.position.z/chunkSize),
+											radius));
+	}
+
 	// Use this for initialization
 	void Start () {
 		Vector3 ppos = player.transform.position;
@@ -70,34 +111,45 @@ public class World : MonoBehaviour {
 											Utils.GenerateHeight(ppos.x,ppos.z) + 1,
 											ppos.z);
 
+		lastbuildPos = player.transform.position;
 		player.SetActive(false);
 
 		firstbuild = true;
 		chunks = new ConcurrentDictionary<string, Chunk>();
 		this.transform.position = Vector3.zero;
 		this.transform.rotation = Quaternion.identity;	
+		queue = new CoroutineQueue(maxCoroutines, StartCoroutine);
 
 		//build starting chunk
 		BuildChunkAt((int)(player.transform.position.x/chunkSize),
 											(int)(player.transform.position.y/chunkSize),
 											(int)(player.transform.position.z/chunkSize));
 		//draw it
-		StartCoroutine(DrawChunks());
+		queue.Run(DrawChunks());
 
 		//create a bigger world
-		StartCoroutine(BuildRecursiveWorld((int)(player.transform.position.x/chunkSize),
+		queue.Run(BuildRecursiveWorld((int)(player.transform.position.x/chunkSize),
 											(int)(player.transform.position.y/chunkSize),
 											(int)(player.transform.position.z/chunkSize),radius));
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		Vector3 movement = lastbuildPos - player.transform.position;
+
+		if(movement.magnitude > chunkSize )
+		{
+			lastbuildPos = player.transform.position;
+			BuildNearPlayer();
+		}
+
+
 		if(!player.activeSelf)
 		{
 			player.SetActive(true);	
 			firstbuild = false;
 		}
 
-		StartCoroutine(DrawChunks());
+		queue.Run(DrawChunks());
 	}
 }
