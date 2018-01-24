@@ -1,6 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
+[Serializable]
+class BlockData
+{
+	public Block.BlockType[,,] matrix;
+	
+	public BlockData(){}
+
+	public BlockData(Block[,,] b)
+	{
+		matrix = new Block.BlockType[World.chunkSize,World.chunkSize,World.chunkSize];
+		for(int z = 0; z < World.chunkSize; z++)
+			for(int y = 0; y < World.chunkSize; y++)
+				for(int x = 0; x < World.chunkSize; x++)
+				{
+					matrix[x,y,z] = b[x,y,z].bType;
+				}
+	}
+}
+
 
 public class Chunk {
 
@@ -9,11 +32,56 @@ public class Chunk {
 	public GameObject chunk;
 	public enum ChunkStatus {DRAW,DONE,KEEP};
 	public ChunkStatus status;
-	public float touchedTime;
+	BlockData bd;
+
+	string BuildChunkFileName(Vector3 v)
+	{
+		return Application.persistentDataPath + "/savedata/Chunk_" + 
+								(int)v.x + "_" +
+									(int)v.y + "_" +
+										(int)v.z + 
+										"_" + World.chunkSize +
+										"_" + World.radius +
+										".dat";
+	}
+
+	bool Load() //read data from file
+	{
+		string chunkFile = BuildChunkFileName(chunk.transform.position);
+		if(File.Exists(chunkFile))
+		{
+			BinaryFormatter bf = new BinaryFormatter();
+			FileStream file = File.Open(chunkFile, FileMode.Open);
+			bd = new BlockData();
+			bd = (BlockData) bf.Deserialize(file);
+			file.Close();
+			//Debug.Log("Loading chunk from file: " + chunkFile);
+			return true;
+		}
+		return false;
+	}
+
+	public void Save() //write data to file
+	{
+		string chunkFile = BuildChunkFileName(chunk.transform.position);
+		
+		if(!File.Exists(chunkFile))
+		{
+			Directory.CreateDirectory(Path.GetDirectoryName(chunkFile));
+		}
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream file = File.Open(chunkFile, FileMode.OpenOrCreate);
+		bd = new BlockData(chunkData);
+		bf.Serialize(file, bd);
+		file.Close();
+		//Debug.Log("Saving chunk from file: " + chunkFile);
+	}
 
 	void BuildChunk()
 	{
-		touchedTime = Time.time;
+		bool dataFromFile = false;
+		dataFromFile = Load();
+
 		chunkData = new Block[World.chunkSize,World.chunkSize,World.chunkSize];
 		for(int z = 0; z < World.chunkSize; z++)
 			for(int y = 0; y < World.chunkSize; y++)
@@ -23,6 +91,15 @@ public class Chunk {
 					int worldX = (int)(x + chunk.transform.position.x);
 					int worldY = (int)(y + chunk.transform.position.y);
 					int worldZ = (int)(z + chunk.transform.position.z);
+
+					if(dataFromFile)
+					{
+						chunkData[x,y,z] = new Block(bd.matrix[x, y, z], pos, 
+						                chunk.gameObject, this);
+						continue;
+					}
+
+
 					int surfaceHeight = Utils.GenerateHeight(worldX,worldZ);
 					
 					if(Utils.fBM3D(worldX, worldY, worldZ, 0.1f, 3) < 0.42f)
@@ -71,7 +148,6 @@ public class Chunk {
 				{
 					chunkData[x,y,z].Draw();
 				}
-
 		CombineQuads();
 		MeshCollider collider = chunk.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
 		collider.sharedMesh = chunk.transform.GetComponent<MeshFilter>().mesh;
