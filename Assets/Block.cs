@@ -127,7 +127,7 @@ public class Block{
 			isSolid = false;
 			health = BlockType.NOCRACK;
 			owner.Redraw();
-			//owner.UpdateChunk();
+			owner.UpdateChunk();
 			return true;
 		}
 		owner.Redraw();

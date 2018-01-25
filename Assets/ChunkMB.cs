@@ -31,7 +31,8 @@ public class ChunkMB: MonoBehaviour
 		for(int i = 0; i < maxdrop; i++)
 		{
 			Block.BlockType previousType = thisBlock.bType;
-			thisBlock.SetType(bt);
+			if(previousType != bt)
+				thisBlock.SetType(bt);
 			if(prevBlock != null)
 				prevBlock.SetType(previousType);
 
@@ -48,7 +49,6 @@ public class ChunkMB: MonoBehaviour
 			}
 		}
 	}
-
 
 	public IEnumerator Flow(Block b, Block.BlockType bt, int strength, int maxsize)
 	{

@@ -80,6 +80,22 @@ public class Chunk {
 		//Debug.Log("Saving chunk from file: " + chunkFile);
 	}
 
+	public void UpdateChunk()
+	{
+		for(int z = 0; z < World.chunkSize; z++)
+			for(int y = 0; y < World.chunkSize; y++)
+				for(int x = 0; x < World.chunkSize; x++)
+				{
+					if(chunkData[x,y,z].bType == Block.BlockType.SAND)
+					{
+						mb.StartCoroutine(mb.Drop(chunkData[x,y,z], 
+										Block.BlockType.SAND, 
+										20));
+					}
+				}
+
+	}
+
 	void BuildChunk()
 	{
 		bool dataFromFile = false;
@@ -129,7 +145,7 @@ public class Chunk {
 					else if(worldY < surfaceHeight)
 						chunkData[x,y,z] = new Block(Block.BlockType.DIRT, pos, 
 						                chunk.gameObject, this);
-					else if(worldY < 75)
+					else if(worldY < 65)
 						chunkData[x,y,z] = new Block(Block.BlockType.WATER, pos, 
 						                fluid.gameObject, this);
 					else
