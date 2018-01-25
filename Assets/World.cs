@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,41 +39,42 @@ public class World : MonoBehaviour {
 		return (int)v.x + "_" + (int)v.z;
 	}
 
-    public static Block GetWorldBlock(Vector3 pos)
-    {
-        int cx, cy, cz;
+	public static Block GetWorldBlock(Vector3 pos)
+	{
+		int cx, cy, cz;
+		
+		if(pos.x < 0)
+			cx = (int) (Mathf.Round(pos.x-chunkSize)/(float)chunkSize) * chunkSize;
+		else
+			cx = (int) (Mathf.Round(pos.x)/(float)chunkSize) * chunkSize;
+		
+		if(pos.y < 0)
+			cy = (int) (Mathf.Round(pos.y-chunkSize)/(float)chunkSize) * chunkSize;
+		else
+			cy = (int) (Mathf.Round(pos.y)/(float)chunkSize) * chunkSize;
+		
 
-        if (pos.x < 0)
-            cx = (int)((Mathf.Round(pos.x - chunkSize) + 1) / (float)chunkSize) * chunkSize;
-        else
-            cx = (int)(Mathf.Round(pos.x) / (float)chunkSize) * chunkSize;
+		if(pos.z < 0)
+			cz = (int) (Mathf.Round(pos.z-chunkSize)/(float)chunkSize) * chunkSize;
+		else
+			cz = (int) (Mathf.Round(pos.z)/(float)chunkSize) * chunkSize;
+	
+		int blx = (int) Mathf.Abs((float)Math.Round(pos.x) - cx);
+		int bly = (int) Mathf.Abs((float)Math.Round(pos.y) - cy);
+		int blz = (int) Mathf.Abs((float)Math.Round(pos.z) - cz);
 
-        if (pos.y < 0)
-            cy = (int)((Mathf.Round(pos.y - chunkSize) + 1) / (float)chunkSize) * chunkSize;
-        else
-            cy = (int)(Mathf.Round(pos.y) / (float)chunkSize) * chunkSize;
+		string cn = BuildChunkName(new Vector3(cx,cy,cz));
+		Chunk c;
+		if(chunks.TryGetValue(cn, out c))
+		{
 
-        if (pos.z < 0)
-            cz = (int)((Mathf.Round(pos.z - chunkSize) + 1) / (float)chunkSize) * chunkSize;
-        else
-            cz = (int)(Mathf.Round(pos.z) / (float)chunkSize) * chunkSize;
+			return c.chunkData[blx,bly,blz];
+		}
+		else
+			return null;
+	}
 
-        int blx = (int)Mathf.Abs((float)Mathf.Round(pos.x) - cx);
-        int bly = (int)Mathf.Abs((float)Mathf.Round(pos.y) - cy);
-        int blz = (int)Mathf.Abs((float)Mathf.Round(pos.z) - cz);
-
-        string cn = BuildChunkName(new Vector3(cx, cy, cz));
-        Chunk c;
-        if (chunks.TryGetValue(cn, out c))
-        {
-
-            return c.chunkData[blx, bly, blz];
-        }
-        else
-            return null;
-    }
-
-    void BuildChunkAt(int x, int y, int z)
+	void BuildChunkAt(int x, int y, int z)
 	{
 		Vector3 chunkPosition = new Vector3(x*chunkSize, 
 											y*chunkSize, 
@@ -83,9 +85,9 @@ public class World : MonoBehaviour {
 
 		if(!chunks.TryGetValue(n, out c))
 		{
-			c = new Chunk(chunkPosition, textureAtlas);
+			c = new Chunk(chunkPosition, textureAtlas, fluidTexture);
 			c.chunk.transform.parent = this.transform;
-			//c.fluid.transform.parent = this.transform;
+			c.fluid.transform.parent = this.transform;
 			chunks.TryAdd(c.chunk.name, c);
 		}
 	}

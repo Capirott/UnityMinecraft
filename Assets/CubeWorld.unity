@@ -249,10 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1022969413}
   textureAtlas: {fileID: 2100000, guid: cccd251ddbe57ce4cb073b97fef0e44c, type: 2}
-  loadingAmount: {fileID: 0}
-  cam: {fileID: 0}
-  playButton: {fileID: 0}
-  lastBuildTime: 0
+  fluidTexture: {fileID: 2100000, guid: 7ecb2e0224133c745b3a8652240f9b47, type: 2}
   lastbuildPos: {x: 0, y: 0, z: 0}
 --- !u!1001 &1022969412
 Prefab:

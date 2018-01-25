@@ -72,7 +72,7 @@ public class Block{
 
 		if(bType == BlockType.WATER)
 		{
-			//parent = owner.fluid.gameObject;
+			parent = owner.fluid.gameObject;
 		}
 		else
 			parent = owner.chunk.gameObject;
