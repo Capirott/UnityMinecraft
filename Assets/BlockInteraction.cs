@@ -16,7 +16,7 @@ public class BlockInteraction : MonoBehaviour {
 	void Update () {
 		
 		if(Input.GetKeyDown("1"))
-			buildtype = Block.BlockType.WATER;
+			buildtype = Block.BlockType.SAND;
 		if(Input.GetKeyDown("2"))
 			buildtype = Block.BlockType.STONE;
 		if(Input.GetKeyDown("3"))

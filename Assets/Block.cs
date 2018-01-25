@@ -96,6 +96,12 @@ public class Block{
 										BlockType.WATER, 
 										blockHealthMax[(int)BlockType.WATER],15));
 		}
+		else if(b == BlockType.SAND)
+		{
+			owner.mb.StartCoroutine(owner.mb.Drop(this, 
+										BlockType.SAND, 
+										20));
+		}
 		else
 		{
 			SetType(b);
@@ -121,6 +127,7 @@ public class Block{
 			isSolid = false;
 			health = BlockType.NOCRACK;
 			owner.Redraw();
+			//owner.UpdateChunk();
 			return true;
 		}
 		owner.Redraw();
