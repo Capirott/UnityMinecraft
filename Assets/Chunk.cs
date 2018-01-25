@@ -140,7 +140,7 @@ public class Chunk {
 					}*/
 					else if(worldY == surfaceHeight)
 					{
-						if(Utils.fBM3D(worldX, worldY, worldZ, 0.4f, 2) < 0.4f)
+						if(Utils.fBM3D(worldX, worldY, worldZ, 0.4f, 2) < 0.28f)
 						{
 							if(worldY > 70)
 								chunkData[x,y,z] = new Block(Block.BlockType.PINEBASE, pos, 
@@ -149,7 +149,7 @@ public class Chunk {
 								chunkData[x,y,z] = new Block(Block.BlockType.WOODBASE, pos, 
 						                chunk.gameObject, this);
 						}
-						else if (Utils.fBM3D(worldX, worldY, worldZ, 0.1f, 2) < 0.5f)
+						else if (Utils.fBM3D(worldX, worldY, worldZ, 0.1f, 2) < 0.2f)
 							chunkData[x,y,z] = new Block(Block.BlockType.SAND, pos, 
 						                chunk.gameObject, this);
 						else
@@ -159,7 +159,7 @@ public class Chunk {
 					else if(worldY < surfaceHeight)
 						chunkData[x,y,z] = new Block(Block.BlockType.DIRT, pos, 
 						                chunk.gameObject, this);
-					else if(worldY < 50)
+					else if(worldY < 68)
 						chunkData[x,y,z] = new Block(Block.BlockType.WATER, pos, 
 						                fluid.gameObject, this);
 					else
@@ -168,7 +168,7 @@ public class Chunk {
 						                chunk.gameObject, this);
 					}
 
-					if(chunkData[x,y,z].bType != Block.BlockType.WATER && Utils.fBM3D(worldX, worldY, worldZ, 0.1f, 3) < 0.42f)
+					if(chunkData[x,y,z].bType != Block.BlockType.WATER && Utils.fBM3D(worldX, worldY, worldZ, 0.1f, 3) < 0.32f)
 						chunkData[x,y,z] = new Block(Block.BlockType.AIR, pos, 
 						                chunk.gameObject, this);
 
