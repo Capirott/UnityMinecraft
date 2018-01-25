@@ -6,7 +6,7 @@ using UnityEngine;
 public class Block{
 
 	enum Cubeside {BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK};
-	public enum BlockType {GRASS, DIRT, WATER, STONE, LEAVES, WOOD, WOODBASE, SAND, GOLD, BEDROCK, REDSTONE, DIAMOND, NOCRACK, 
+	public enum BlockType {GRASS, DIRT, WATER, STONE, LEAVES, PINELEAVES, WOOD, WOODBASE, PINE, PINEBASE, SAND, GOLD, BEDROCK, REDSTONE, DIAMOND, NOCRACK, 
 							CRACK1, CRACK2, CRACK3, CRACK4, AIR};
 
 	public BlockType bType;
@@ -17,7 +17,7 @@ public class Block{
 
 	public BlockType health;
 	public int currentHealth;
-	int[] blockHealthMax = {3, 3, 10, 4, 2, 4, 4, 2, 3, -1, 4, 4, 0, 0, 0, 0, 0, 0};
+	int[] blockHealthMax = {3, 3, 10, 4, 2, 2, 4, 4, 4, 4, 2, 3, -1, 4, 4, 0, 0, 0, 0, 0, 0};
 
 	Vector2[,] blockUVs = { 
 		/*GRASS TOP*/		{new Vector2( 0.125f, 0.375f ), new Vector2( 0.1875f, 0.375f),
@@ -32,10 +32,16 @@ public class Block{
 								new Vector2( 0, 0.9375f ),new Vector2( 0.0625f, 0.9375f )},
 		/*LEAVES*/			{ new Vector2(0.0625f,0.375f),  new Vector2(0.125f,0.375f),
  								new Vector2(0.0625f,0.4375f), new Vector2(0.125f,0.4375f)},
+ 		/*PINELEAVES*/			{ new Vector2(0.125f,0.375f),  new Vector2(0.1875f,0.375f),
+ 								new Vector2(0.125f,0.4375f), new Vector2(0.1875f,0.4375f)},
  		/*WOOD*/			{ new Vector2(0.375f,0.625f),  new Vector2(0.4375f,0.625f),
  								new Vector2(0.375f,0.6875f), new Vector2(0.4375f,0.6875f)},
  		/*WOODBASE*/		{ new Vector2(0.375f,0.625f),  new Vector2(0.4375f,0.625f),
- 								new Vector2(0.375f,0.6875f), new Vector2(0.4375f,0.6875f)},	    
+ 								new Vector2(0.375f,0.6875f), new Vector2(0.4375f,0.6875f)},
+ 		/*PINE*/			{ new Vector2(0.4375f,0.625f),  new Vector2(0.5f,0.625f),
+ 								new Vector2(0.4375f,0.6875f), new Vector2(0.5f,0.6875f)},	
+ 		/*PINEBASE*/		{ new Vector2(0.4375f,0.625f),  new Vector2(0.5f,0.625f),
+ 								new Vector2(0.4375f,0.6875f), new Vector2(0.5f,0.6875f)},
 		/*SAND*/			{ new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
  								new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)},
  		/*GOLD*/			{ new Vector2(0f,0.8125f),  new Vector2(0.0625f,0.8125f),
