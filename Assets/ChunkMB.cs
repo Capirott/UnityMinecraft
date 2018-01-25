@@ -24,6 +24,55 @@ public class ChunkMB: MonoBehaviour
 			owner.chunkData[x,y,z].Reset();
 	}
 
+	public IEnumerator Flow(Block b, Block.BlockType bt, int strength, int maxsize)
+	{
+		//reduce the strenth of the fluid block
+		//with each new block created
+		if(maxsize <= 0) yield break;
+		if(b == null) yield break;
+		if(strength <= 0) yield break;
+		if(b.bType != Block.BlockType.AIR) yield break;
+		b.SetType(bt);
+		b.currentHealth = strength;
+		b.owner.Redraw();
+		yield return new WaitForSeconds(1);
+
+		int x = (int) b.position.x;
+		int y = (int) b.position.y;
+		int z = (int) b.position.z;
+
+		//flow down if air block beneath
+		Block below = b.GetBlock(x,y-1,z);
+		if(below != null && below.bType == Block.BlockType.AIR)
+		{
+			StartCoroutine(Flow(b.GetBlock(x,y-1,z),bt,strength,--maxsize));
+			yield break;
+		}
+		else //flow outward
+		{
+			--strength;
+			--maxsize;
+			//flow left
+			World.queue.Run(Flow(b.GetBlock(x-1,y,z),bt,strength,maxsize));
+			yield return new WaitForSeconds(1);
+
+			//flow right
+			World.queue.Run(Flow(b.GetBlock(x+1,y,z),bt,strength,maxsize));
+			yield return new WaitForSeconds(1);
+
+			//flow forward
+			World.queue.Run(Flow(b.GetBlock(x,y,z+1),bt,strength,maxsize));
+			yield return new WaitForSeconds(1);
+
+			//flow back
+			World.queue.Run(Flow(b.GetBlock(x,y,z-1),bt,strength,maxsize));
+			yield return new WaitForSeconds(1);
+		}
+
+
+		
+	}
+
 	void SaveProgress()
 	{
 		if(owner.changed)

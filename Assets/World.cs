@@ -23,7 +23,7 @@ public class World : MonoBehaviour {
 
 	float startTime;
 
-	CoroutineQueue queue;
+	public static CoroutineQueue queue;
 
 	public Vector3 lastbuildPos;
 

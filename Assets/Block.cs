@@ -17,7 +17,7 @@ public class Block{
 
 	public BlockType health;
 	public int currentHealth;
-	int[] blockHealthMax = {3, 3, 8, 4, 2, 3, -1, 4, 4, 0, 0, 0, 0, 0, 0};
+	int[] blockHealthMax = {3, 3, 10, 4, 2, 3, -1, 4, 4, 0, 0, 0, 0, 0, 0};
 
 	Vector2[,] blockUVs = { 
 		/*GRASS TOP*/		{new Vector2( 0.125f, 0.375f ), new Vector2( 0.1875f, 0.375f),
@@ -90,8 +90,17 @@ public class Block{
 
 	public bool BuildBlock(BlockType b)
 	{
-		SetType(b);
-		owner.Redraw();
+		if(b == BlockType.WATER)
+		{
+			owner.mb.StartCoroutine(owner.mb.Flow(this, 
+										BlockType.WATER, 
+										blockHealthMax[(int)BlockType.WATER],15));
+		}
+		else
+		{
+			SetType(b);
+			owner.Redraw();
+		}
 		return true;
 	}
 
